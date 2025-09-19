@@ -14,7 +14,7 @@ class FastApiHandler:
             "model_params": dict
         }
 
-        self.model_path = "models/catboost_churn_model.bin"
+        self.model_path = "../models/catboost_churn_model.bin"
         self.load_churn_model(model_path=self.model_path)
         
         # необходимые параметры для предсказаний модели оттока
@@ -30,6 +30,7 @@ class FastApiHandler:
             model_path (str): Путь до модели.
         """
         try:
+            print("LOADING FROM ", model_path)
             self.model = CatBoostClassifier()
             self.model.load_model(model_path)
         except Exception as e:
@@ -55,6 +56,7 @@ class FastApiHandler:
         Returns:
             bool: True - если есть нужные параметры, False - иначе
         """
+        print("QUERY PARAMS KEY: ", query_params.keys())
         if "user_id" not in query_params or "model_params" not in query_params:
             return False
      
@@ -122,6 +124,7 @@ class FastApiHandler:
                     "is_churn": int(prediction > 0.5)
                 }
         except Exception as e:
+            print("EXCEPTION", e)
             return {"Error": "Problem with request"}
         else:
             return response
